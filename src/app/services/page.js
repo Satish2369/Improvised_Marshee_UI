@@ -5,7 +5,7 @@ import ServicesSection from "@/Components/ServicesSection";
 
 const Page = () => {
   return (
-<ProtectedRoute>
+<>
       <div >
            <SearchBar/>
 
@@ -14,7 +14,7 @@ const Page = () => {
            <ServicesSection title="Preventive Health" itemsCount={4} />
            
       </div>
-    </ProtectedRoute>
+    </>
   )
 }
 

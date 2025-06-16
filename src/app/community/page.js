@@ -3,7 +3,7 @@ import ProtectedRoute from "@/Components/ProtectedRoute";
 const Page = () => {
   return (
     <>
-      <ProtectedRoute>
+    
         <div className="w-full h-full bg-[#f8f8f8] rounded-[24px] p-8">
           <div className="bg-white rounded-[16px] w-[70vw] flex  flex-col justify-center items-center py-10 px-6 text-center mb-10 h-[17vw] ">
             <h2 className="text-[26px]  mb-2">
@@ -52,7 +52,7 @@ const Page = () => {
          
         
         </div>
-      </ProtectedRoute>
+      
     </>
   );
 };
