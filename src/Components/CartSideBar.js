@@ -2,6 +2,7 @@
 "use client";
 
 import { useSelector } from "react-redux";
+import Image from "next/image";
 
 export default function CartSidebar({ isOpen, onClose }) {
   const cartItems = useSelector((state) => state.cart.items);
@@ -26,7 +27,7 @@ export default function CartSidebar({ isOpen, onClose }) {
         ) : (
           cartItems.map((item) => (
             <div key={item.id} className="flex items-start gap-4 border-b pb-3">
-              <img src={item.image} alt={item.name} className="w-16 h-16 object-cover" />
+              <Image src={item.image} alt={item.name} className="w-16 h-16 object-cover" />
               <div className="flex-1">
                 <p className="font-medium text-black">{item.name}</p>
                 <p className="text-sm text-gray-600">Qty: {item.quantity}</p>

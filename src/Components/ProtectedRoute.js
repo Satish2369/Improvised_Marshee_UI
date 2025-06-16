@@ -13,7 +13,7 @@ const ProtectedRoute = ({ children }) => {
     if (!loading && !isAuthenticated && pathname !== "/login") {
       router.push("/login?redirect=" + pathname);
     }
-  }, [isAuthenticated, loading]);
+  }, [isAuthenticated, loading,router, pathname]);
 
   if (loading) return <div></div>; 
 
