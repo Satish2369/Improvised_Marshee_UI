@@ -3,7 +3,7 @@ import Link from "next/link";
 
 const Sidebar = () => {
   return (
-    <div className="w-[90px] min-h-screen flex flex-col items-center pb-3 gap-1 ">
+    <div className="w-[90px] min-h-screen flex flex-col items-center pb-3 gap-1  sticky top-0   rounded-tr-2xl rounded-br-2xl">
       <div>
         <Image
           src="/logo_marshee_transparent.png"

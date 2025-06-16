@@ -10,7 +10,7 @@ const ProtectedRoute = ({ children }) => {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) {
+    if (!loading && !isAuthenticated && pathname !== "/login") {
       router.push("/login?redirect=" + pathname);
     }
   }, [isAuthenticated, loading]);

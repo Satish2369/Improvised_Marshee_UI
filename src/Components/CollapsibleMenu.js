@@ -4,7 +4,7 @@ import { useState } from "react";
 import { RxHamburgerMenu, RxCross2 } from "react-icons/rx";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { removeUser } from "@/redux/slices/userSlice"; // adjust path as needed
 import { BASE_URL } from "@/utils/constant"; // adjust path as needed
 
@@ -14,6 +14,8 @@ const CollapsibleMenu = () => {
   const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
   const dispatch = useDispatch();
   const router = useRouter();
+  const pathname = usePathname();
+  console.log("Current Pathname:", pathname);
   
 
   const handleLogout = async () => {

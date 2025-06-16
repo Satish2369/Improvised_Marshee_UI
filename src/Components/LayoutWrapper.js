@@ -14,7 +14,7 @@ import { BASE_URL } from "@/utils/constant"; // Ensure this is the correct path 
 export default function LayoutWrapper({ children }) {
   const pathname = usePathname();
   const dispatch = useDispatch();
-  const authPages = ["/login", "/register"];
+  const authPages = ["/login", "/signup"];
   const isAuthPage = authPages.includes(pathname);
 
 useEffect(() => {
