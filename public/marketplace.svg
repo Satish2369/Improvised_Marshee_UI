@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #f9e310;
+      }
+    </style>
+  </defs>
+  <image width="158" height="148" transform="translate(91.58 -37.95)" xlink:href="marketplaceicon.png"/>
+  <g>
+    <g>
+      <path d="M13.96,29.19h72.04v53.92c0,3.71-3.01,6.72-6.72,6.72H20.68c-3.71,0-6.72-3.01-6.72-6.72V29.19h0Z"/>
+      <circle class="cls-1" cx="26.21" cy="39.28" r="14.44"/>
+      <circle class="cls-1" cx="50.09" cy="39.28" r="14.44"/>
+      <circle class="cls-1" cx="73.79" cy="39.28" r="14.44"/>
+      <polygon class="cls-1" points="11.88 37.51 18.05 14.6 81.92 14.6 88.23 37.51 11.88 37.51"/>
+    </g>
+    <path class="cls-1" d="M38.19,89.83v-12.84c0-6.52,5.29-11.81,11.81-11.81s11.81,5.29,11.81,11.81v12.84"/>
+  </g>
+</svg>
