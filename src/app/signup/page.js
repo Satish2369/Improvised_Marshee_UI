@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { addUser } from "@/redux/slices/userSlice";
 import { BASE_URL } from "@/utils/constant";
-import { getAuth, RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
-import "@/utils/firebase"; 
+import { auth } from "@/utils/firebase";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
 const Signup = () => {
   const [mode, setMode] = useState("email");
@@ -23,22 +23,55 @@ const Signup = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (typeof window !== "undefined" && mode === "phone" && !window.recaptchaVerifier) {
-      const auth = getAuth();
-      window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
-        size: 'invisible',
-        callback: () => {},
-      });
+    // Only set up recaptcha when in phone mode and in browser
+    if (typeof window !== "undefined" && mode === "phone") {
+      // Clean up any existing recaptcha verifier
+      if (window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier.clear();
+        } catch (err) {
+          console.warn("Recaptcha cleanup error:", err.message);
+        }
+        window.recaptchaVerifier = null;
+      }
+
+      // Delay the creation slightly to ensure Firebase is ready
+      const timer = setTimeout(() => {
+        try {
+          window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+            size: "invisible",
+            callback: () => {
+              // Callback for successful recaptcha verification
+            },
+          });
+        } catch (err) {
+          console.error("RecaptchaVerifier init failed:", err.message);
+        }
+      }, 1000);
+
+      return () => {
+        clearTimeout(timer);
+        if (window.recaptchaVerifier) {
+          try {
+            window.recaptchaVerifier.clear();
+          } catch (err) {}
+          window.recaptchaVerifier = null;
+        }
+      };
     }
   }, [mode]);
 
   const handleEmailSignup = async () => {
     try {
-      const { data } = await axios.post(`${BASE_URL}/signup/email`, {
-        name,
-        emailId,
-        password,
-      }, { withCredentials: true });
+      const { data } = await axios.post(
+        `${BASE_URL}/signup/email`,
+        {
+          name,
+          emailId,
+          password,
+        },
+        { withCredentials: true }
+      );
 
       dispatch(addUser(data.data));
       router.push("/");
@@ -49,15 +82,41 @@ const Signup = () => {
 
   const handleSendOtp = async () => {
     try {
-      const auth = getAuth();
+      if (!window.recaptchaVerifier) {
+        // If recaptchaVerifier isn't ready yet, create it
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+          size: "invisible",
+        });
+      }
+      
       const appVerifier = window.recaptchaVerifier;
+      const fullPhone = phone.startsWith("+91") ? phone : `+91${phone}`;
 
-      const fullPhone = `+91${phone}`; 
       const result = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
       setConfirmationResult(result);
       setOtpSent(true);
+      alert("OTP sent successfully!");
     } catch (err) {
-      console.error("OTP send error", err.message);
+      console.error("OTP send error:", err.message);
+      alert("Failed to send OTP. Please try again.");
+      
+      // Try to recreate the recaptcha
+      if (window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier.clear();
+        } catch (clearErr) {}
+        window.recaptchaVerifier = null;
+      }
+      
+      setTimeout(() => {
+        try {
+          window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+            size: "invisible",
+          });
+        } catch (retryErr) {
+          console.error("Retry failed:", retryErr.message);
+        }
+      }, 1000);
     }
   };
 
@@ -66,16 +125,21 @@ const Signup = () => {
       const result = await confirmationResult.confirm(otp);
       const user = result.user;
 
-      const { data } = await axios.post(`${BASE_URL}/signup/otp`, {
-        name,
-        phone,
-        uid: user.uid,
-      }, { withCredentials: true });
+      const { data } = await axios.post(
+        `${BASE_URL}/signup/otp`,
+        {
+          name,
+          phone,
+          uid: user.uid,
+        },
+        { withCredentials: true }
+      );
 
       dispatch(addUser(data.data));
       router.push("/");
     } catch (err) {
-      console.error("OTP verify error", err.message);
+      console.error("OTP verify error:", err.message);
+      alert("OTP verification failed. Please try again.");
     }
   };
 
@@ -154,7 +218,6 @@ const Signup = () => {
             >
               {otpSent ? "Verify OTP & Signup" : "Send OTP"}
             </button>
-            <div id="recaptcha-container"></div>
           </>
         )}
 
@@ -167,6 +230,9 @@ const Signup = () => {
             Login
           </button>
         </p>
+
+        {/* Recaptcha should be rendered at the bottom */}
+        <div id="recaptcha-container"></div>
       </div>
     </div>
   );

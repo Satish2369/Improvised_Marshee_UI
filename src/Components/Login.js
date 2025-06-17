@@ -6,7 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { addUser } from "@/redux/slices/userSlice";
 import { BASE_URL } from "@/utils/constant";
-import { auth, RecaptchaVerifier, signInWithPhoneNumber,} from "@/utils/firebase";
+import { auth } from "@/utils/firebase";
+import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 
 const Login = () => {
   const [mode, setMode] = useState("email"); // "email" or "phone"
@@ -21,6 +22,30 @@ const Login = () => {
   const dispatch = useDispatch();
   const searchParams = useSearchParams();
   const redirectPath = searchParams.get("redirect") || "/";
+
+  useEffect(() => {
+    // Only set up recaptcha when in phone mode
+    if (typeof window !== "undefined" && mode === "phone") {
+      // Clean up any existing recaptcha verifier
+      if (window.recaptchaVerifier) {
+        try {
+          window.recaptchaVerifier.clear();
+        } catch (err) {
+          console.warn("Recaptcha cleanup error:", err.message);
+        }
+        window.recaptchaVerifier = null;
+      }
+
+      return () => {
+        if (window.recaptchaVerifier) {
+          try {
+            window.recaptchaVerifier.clear();
+          } catch (err) {}
+          window.recaptchaVerifier = null;
+        }
+      };
+    }
+  }, [mode]);
 
   const handleEmailLogin = async () => {
     try {
@@ -37,12 +62,29 @@ const Login = () => {
   };
 
   const generateRecaptcha = () => {
-    if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        "recaptcha-container",
-        { size: "invisible" },
-        auth
-      );
+    if (window.recaptchaVerifier) {
+      try {
+        window.recaptchaVerifier.clear();
+      } catch (err) {}
+      window.recaptchaVerifier = null;
+    }
+
+    try {
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+        size: "invisible"
+      });
+    } catch (error) {
+      console.error("RecaptchaVerifier init failed:", error.message);
+      // Add a retry with timeout
+      setTimeout(() => {
+        try {
+          window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+            size: "invisible"
+          });
+        } catch (retryError) {
+          console.error("Retry failed:", retryError.message);
+        }
+      }, 1000);
     }
   };
 
@@ -50,13 +92,20 @@ const Login = () => {
     try {
       generateRecaptcha();
       const appVerifier = window.recaptchaVerifier;
+      
+      if (!appVerifier) {
+        alert("Verification system is initializing. Please try again in a moment.");
+        return;
+      }
 
-      const result = await signInWithPhoneNumber(auth, phone, appVerifier);
+      const fullPhone = phone.startsWith("+91") ? phone : `+91${phone}`;
+      const result = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
       setConfirmationResult(result);
       setOtpSent(true);
       alert("OTP sent successfully!");
     } catch (error) {
       console.error("Firebase OTP error:", error.message);
+      alert("Failed to send OTP. Please try again.");
     }
   };
 
@@ -65,7 +114,6 @@ const Login = () => {
       const result = await confirmationResult.confirm(otp);
       const user = result.user;
 
-      // ✅ Send UID and phone to your backend
       const { data } = await axios.post(
         `${BASE_URL}/login/otp`,
         { uid: user.uid, phone: user.phoneNumber },
@@ -164,7 +212,7 @@ const Login = () => {
         )}
 
         <p className="mt-4 text-sm text-center">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <button
             onClick={() => router.push("/signup")}
             className="text-yellow-400 hover:underline cursor-pointer"
