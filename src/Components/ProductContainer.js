@@ -35,6 +35,7 @@ const ProductContainer = ({ id, name, price, category,image }) => {
           alt="product_Image"
           height={98}
           width={98}
+        
         />
       </div>
       <div className="text-[12px] text-center pt-0.5">{name}</div>

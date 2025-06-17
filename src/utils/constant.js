@@ -5,6 +5,7 @@ export const categories = [
   { name: "Dog", icon: <FaDog /> },
   { name: "Cat", icon: <FaCat /> },
   { name: "Horse", icon: <FaHorse /> },
+  {name : "Bird", icon: <FaDove /> },
   
 ];
 
