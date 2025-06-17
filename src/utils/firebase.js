@@ -3,16 +3,17 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBoTR2XRuEoI_GAMQJjnAOM3PPbV_kDSEo",
-  authDomain: "marshee-4820d.firebaseapp.com",
-  projectId: "marshee-4820d",
-  storageBucket: "marshee-4820d.appspot.com",
-  messagingSenderId: "299120719376",
-  appId: "1:299120719376:web:f24ac42080d87d89fabc95",
-  measurementId: "G-4HREKSDB33",
+  apiKey: process.env.NEXT_PUBLIC_API_KEY,
+  authDomain: "marshe-otp.firebaseapp.com",
+  projectId: "marshe-otp",
+  storageBucket: "marshe-otp.firebasestorage.app",
+  messagingSenderId: "63361484741",
+  appId: "1:63361484741:web:c150d4ce7efe1b96c02dac",
+  measurementId: "G-8B1TDXB9QJ"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 export { auth };
+
