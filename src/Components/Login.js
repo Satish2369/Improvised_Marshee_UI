@@ -212,7 +212,7 @@ const Login = () => {
         )}
 
         <p className="mt-4 text-sm text-center">
-          Don't have an account?{" "}
+          Don&apos;t have an account?
           <button
             onClick={() => router.push("/signup")}
             className="text-yellow-400 hover:underline cursor-pointer"
