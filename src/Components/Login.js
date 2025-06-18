@@ -113,7 +113,7 @@ const Login = () => {
     try {
       const result = await confirmationResult.confirm(otp);
       const user = result.user;
-       const fullPhone = phone.startsWith("+91") ? phone : `+91${phone}`;
+      const fullPhone = phone.startsWith("+91") ? phone : `+91${phone}`;
 
       const { data } = await axios.post(
         `${BASE_URL}/login/otp`,

@@ -91,7 +91,7 @@ const Signup = () => {
       
       const appVerifier = window.recaptchaVerifier;
       
-
+      const fullPhone = phone.startsWith("+91") ? phone : `+91${phone}`;
       const result = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
       setConfirmationResult(result);
       setOtpSent(true);
@@ -131,7 +131,7 @@ const Signup = () => {
         `${BASE_URL}/signup/otp`,
         {
           name,
-          phone:fullPhone,
+          phone: fullPhone,
           uid: user.uid,
         },
         { withCredentials: true }
