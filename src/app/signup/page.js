@@ -67,7 +67,7 @@ const Signup = () => {
         `${BASE_URL}/signup/email`,
         {
           name,
-          emailId,
+         email:emailId,
           password,
         },
         { withCredentials: true }

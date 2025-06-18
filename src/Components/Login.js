@@ -51,7 +51,7 @@ const Login = () => {
     try {
       const { data } = await axios.post(
         `${BASE_URL}/login/email`,
-        { emailId, password },
+        { email: emailId, password },
         { withCredentials: true }
       );
       dispatch(addUser(data.data));
