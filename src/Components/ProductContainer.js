@@ -28,14 +28,13 @@ const ProductContainer = ({ id, name, price, category,image }) => {
   };
 
   return (
-    <div className="h-[220px] w-[242px] border rounded-md border-white p-2 m-1.5">
+    <div className="h-[220px] w-[242px] border rounded-md bg-white border-white p-2 m-1.5">
       <div className="flex justify-center mb-1">
         <Image
           src={image}
           alt="product_Image"
           height={98}
           width={98}
-        
         />
       </div>
       <div className="text-[12px] text-center pt-0.5">{name}</div>
