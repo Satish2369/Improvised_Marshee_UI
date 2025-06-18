@@ -90,7 +90,7 @@ const Signup = () => {
       }
       
       const appVerifier = window.recaptchaVerifier;
-      const fullPhone = phone.startsWith("+91") ? phone : `+91${phone}`;
+      
 
       const result = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
       setConfirmationResult(result);
@@ -125,11 +125,13 @@ const Signup = () => {
       const result = await confirmationResult.confirm(otp);
       const user = result.user;
 
+      const fullPhone = phone.startsWith("+91") ? phone : `+91${phone}`;
+
       const { data } = await axios.post(
         `${BASE_URL}/signup/otp`,
         {
           name,
-          phone,
+          phone:fullPhone,
           uid: user.uid,
         },
         { withCredentials: true }
