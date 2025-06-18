@@ -12,7 +12,7 @@ import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 const Signup = () => {
   const [mode, setMode] = useState("email");
   const [name, setName] = useState("");
-  const [emailId, setEmailId] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
@@ -23,9 +23,7 @@ const Signup = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // Only set up recaptcha when in phone mode and in browser
     if (typeof window !== "undefined" && mode === "phone") {
-      // Clean up any existing recaptcha verifier
       if (window.recaptchaVerifier) {
         try {
           window.recaptchaVerifier.clear();
@@ -35,14 +33,11 @@ const Signup = () => {
         window.recaptchaVerifier = null;
       }
 
-      // Delay the creation slightly to ensure Firebase is ready
       const timer = setTimeout(() => {
         try {
           window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
             size: "invisible",
-            callback: () => {
-              // Callback for successful recaptcha verification
-            },
+            callback: () => {},
           });
         } catch (err) {
           console.error("RecaptchaVerifier init failed:", err.message);
@@ -67,12 +62,12 @@ const Signup = () => {
         `${BASE_URL}/signup/email`,
         {
           name,
-         email:emailId,
+          email, 
           password,
         },
         { withCredentials: true }
       );
-
+     console.log(name,email,password);
       dispatch(addUser(data.data));
       router.push("/");
     } catch (error) {
@@ -83,14 +78,12 @@ const Signup = () => {
   const handleSendOtp = async () => {
     try {
       if (!window.recaptchaVerifier) {
-        // If recaptchaVerifier isn't ready yet, create it
         window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
           size: "invisible",
         });
       }
-      
+
       const appVerifier = window.recaptchaVerifier;
-      
       const fullPhone = phone.startsWith("+91") ? phone : `+91${phone}`;
       const result = await signInWithPhoneNumber(auth, fullPhone, appVerifier);
       setConfirmationResult(result);
@@ -99,15 +92,14 @@ const Signup = () => {
     } catch (err) {
       console.error("OTP send error:", err.message);
       alert("Failed to send OTP. Please try again.");
-      
-      // Try to recreate the recaptcha
+
       if (window.recaptchaVerifier) {
         try {
           window.recaptchaVerifier.clear();
         } catch (clearErr) {}
         window.recaptchaVerifier = null;
       }
-      
+
       setTimeout(() => {
         try {
           window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
@@ -124,7 +116,6 @@ const Signup = () => {
     try {
       const result = await confirmationResult.confirm(otp);
       const user = result.user;
-
       const fullPhone = phone.startsWith("+91") ? phone : `+91${phone}`;
 
       const { data } = await axios.post(
@@ -178,8 +169,8 @@ const Signup = () => {
             <input
               type="email"
               placeholder="Email"
-              value={emailId}
-              onChange={(e) => setEmailId(e.target.value)}
+              value={email} 
+              onChange={(e) => setEmail(e.target.value.toLowerCase())}
               className="w-full mb-3 p-2 rounded bg-gray-800 border border-gray-700"
             />
             <input
@@ -191,7 +182,7 @@ const Signup = () => {
             />
             <button
               onClick={handleEmailSignup}
-              className="w-full bg-yellow-400 text-black py-2 rounded hover:bg-yellow-500 transition"
+              className="w-full bg-yellow-400 text-black py-2 rounded hover:bg-yellow-500 transition cursor-pointer"
             >
               Sign Up with Email
             </button>
@@ -223,7 +214,7 @@ const Signup = () => {
           </>
         )}
 
-        <p className="mt-4 text-sm text-center">
+        <p className="mt-4 text-sm text-center cursor-pointer" >
           Already have an account?{" "}
           <button
             onClick={() => router.push("/login")}
@@ -233,7 +224,6 @@ const Signup = () => {
           </button>
         </p>
 
-        {/* Recaptcha should be rendered at the bottom */}
         <div id="recaptcha-container"></div>
       </div>
     </div>
