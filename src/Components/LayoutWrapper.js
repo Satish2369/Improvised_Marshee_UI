@@ -41,7 +41,7 @@ useEffect(() => {
         <Sidebar />
       </div>
 
-     <div className="w-full min-h-full ml-[2.5vw] mt-[1.2vw] mr-[1.2vw] p-[2vw] pl-[0.1vw] bg-[#f8f8f8]  rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-2xl ">
+     <div className="w-full min-h-full ml-[2.5vw] mt-[1.2vw] mr-[1.2vw] p-[2vw] pl-[0.1vw] bg-white  rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl rounded-br-2xl ">
         <div className="flex-1 ">
         {children}
       </div>
